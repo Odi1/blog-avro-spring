@@ -16,9 +16,6 @@
 
 package se.callista.blog.avro_spring.car.client;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,8 +24,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import se.callista.blog.avro_spring.car.avro.Car;
+
+import java.nio.charset.Charset;
+import java.util.Collections;
 
 /**
  * Rest Client example, using Avro Serializer/Deserializer.
@@ -39,7 +38,7 @@ import se.callista.blog.avro_spring.car.avro.Car;
 public class CarClient {
 
   private static final MediaType APPLICATION_AVRO_JSON =
-      new MediaType("application", "avro+json", Charset.forName("UTF-8"));
+      new MediaType("application", "avro_json", Charset.forName("UTF-8"));
 
   @Autowired
   private RestTemplate restTemplate;

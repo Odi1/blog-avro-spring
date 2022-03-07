@@ -16,11 +16,10 @@
 
 package se.callista.blog.avro_spring.car.avro.serde;
 
-import java.io.IOException;
-
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import se.callista.blog.avro_spring.car.avro.Car;
+
+import java.io.IOException;
 
 /**
  * Tests for CarSerDe
@@ -56,5 +55,4 @@ public class CarSerDeTest {
     assert car1 != carCopy;
     assert car1.equals(carCopy);
   }
-
 }

@@ -16,9 +16,6 @@
 
 package se.callista.blog.avro_spring.serde;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
@@ -26,6 +23,9 @@ import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Avro serialization.
@@ -42,10 +42,6 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
     this.useBinaryEncoding = useBinaryEncoding;
   }
 
-  public boolean isUseBinaryEncoding() {
-    return useBinaryEncoding;
-  }
-
   @Override
   public byte[] serialize(T data) throws SerializationException {
     try {
@@ -58,7 +54,7 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Encoder encoder = useBinaryEncoding ?
             EncoderFactory.get().binaryEncoder(byteArrayOutputStream, null) :
-            EncoderFactory.get().jsonEncoder(data.getSchema(), byteArrayOutputStream);;
+            EncoderFactory.get().jsonEncoder(data.getSchema(), byteArrayOutputStream);
 
         DatumWriter<T> datumWriter = new SpecificDatumWriter<>(data.getSchema());
         datumWriter.write(data, encoder);
@@ -67,9 +63,6 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
         byteArrayOutputStream.close();
 
         result = byteArrayOutputStream.toByteArray();
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("serialized data='{}' ({})", DatatypeConverter.printHexBinary(result), new String(result));
-        }
       }
       return result;
     } catch (IOException e) {

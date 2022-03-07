@@ -15,10 +15,6 @@
  */
 package se.callista.blog.avro_spring.serde;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.avro.Schema;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
@@ -27,6 +23,11 @@ import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * Avro deserialization.
@@ -49,15 +50,13 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
 
   @Override
   public T deserialize(Class<? extends T> clazz, byte[] data) throws SerializationException {
+
     try {
       T result = null;
       if (data != null) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("data='{}' ({})", DatatypeConverter.printHexBinary(data), new String(data));
-        }
         Class<? extends SpecificRecordBase> specificRecordClass =
             (Class<? extends SpecificRecordBase>) clazz;
-        Schema schema = specificRecordClass.newInstance().getSchema();
+        Schema schema = specificRecordClass.getDeclaredConstructor().newInstance().getSchema();
         DatumReader<T> datumReader =
             new SpecificDatumReader<>(schema);
         Decoder decoder = useBinaryEncoding ?
@@ -70,7 +69,7 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
         }
       }
       return result;
-    } catch (InstantiationException | IllegalAccessException | IOException e) {
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IOException | InvocationTargetException e) {
       throw new SerializationException("Can't deserialize data '" + Arrays.toString(data) + "'", e);
     }
   }

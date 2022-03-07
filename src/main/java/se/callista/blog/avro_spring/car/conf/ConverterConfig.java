@@ -16,16 +16,18 @@
 
 package se.callista.blog.avro_spring.car.conf;
 
-import java.util.List;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import se.callista.blog.avro_spring.serde.spring.AvroBinaryHttpMessageConverter;
 import se.callista.blog.avro_spring.serde.spring.AvroJsonHttpMessageConverter;
+
+import java.util.List;
 
 /**
  * Configuration required to use the Avro{Binary,Json}HttpMessageConverter.
@@ -33,11 +35,12 @@ import se.callista.blog.avro_spring.serde.spring.AvroJsonHttpMessageConverter;
  * @author Björn Beskow
  */
 @Configuration
-public class ConverterConfig extends WebMvcConfigurerAdapter {
+@Order(2)
+public class ConverterConfig implements WebMvcConfigurer {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    super.configureMessageConverters(converters);
+    //super.configureMessageConverters(converters);
     converters.add(new AvroBinaryHttpMessageConverter<SpecificRecordBase>());
     converters.add(new AvroJsonHttpMessageConverter<SpecificRecordBase>());
   }

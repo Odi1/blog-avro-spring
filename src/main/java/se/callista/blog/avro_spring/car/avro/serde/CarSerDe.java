@@ -31,16 +31,9 @@ public class CarSerDe {
   private AvroSerializer<Car> serializer;
   private AvroDeserializer<Car> deserializer;
 
-  private final boolean useBinaryEncoding;
-  
   public CarSerDe(boolean useBinaryEncoding) {
-    this.useBinaryEncoding = useBinaryEncoding;
     serializer = new AvroSerializer<>(useBinaryEncoding);
     deserializer = new AvroDeserializer<>(useBinaryEncoding);
-  }
-
-  public boolean isUseBinaryEncoding() {
-    return useBinaryEncoding;
   }
 
   public Car deserialize(byte[] bytes) throws SerializationException {

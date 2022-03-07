@@ -5,44 +5,49 @@
  */
 package se.callista.blog.avro_spring.car.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.avro.serde.CarSerDe;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * Tests for CarClient
  * 
  * @author Björn Beskow
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @RestClientTest(CarClient.class)
 @ComponentScan("se.callista.blog.avro_spring.car")
 public class CarClientTest {
 
   private static final String VIN = "123456789";
   private static final String PLATE_NUMBER = "ABC 123";
+  private static final String MEDIA_SUB_TYPE_BINARY = "avro";
+  private static final String MEDIA_SUB_TYPE_NON_BINARY = "avro_json";
 
-  private CarSerDe carSerDe = new CarSerDe(false);
+  private static CarSerDe carSerDeBinary = new CarSerDe(true);
+  private static CarSerDe carSerDeNonBinary = new CarSerDe(false);
 
-  private Car car;
-  private byte[] serializedCar;
+  private static Car car;
+  private static byte[] serializedCarBinary;
+  private static byte[] serializedCarNonBinary;
 
   @Autowired
   private CarClient client;
@@ -53,17 +58,18 @@ public class CarClientTest {
   @MockBean
   private CarRepository carRepository;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeAll
+  public static void setUp() throws Exception {
     car = new Car(VIN, PLATE_NUMBER);
-    serializedCar = carSerDe.serialize(car);
+    serializedCarBinary = carSerDeBinary.serialize(car);
+    serializedCarNonBinary = carSerDeNonBinary.serialize(car);
   }
 
   @Test
-  public void testGetCar() throws Exception {
+  public void testGetCarBinary() throws Exception {
     given(carRepository.getCar(VIN)).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
-        .andRespond(withSuccess(serializedCar, new MediaType("application", "avro+json")));
+        .andRespond(withSuccess(serializedCarBinary, new MediaType("application", MEDIA_SUB_TYPE_BINARY)));
 
     Car actualCar = this.client.getCar(VIN);
 
@@ -71,10 +77,32 @@ public class CarClientTest {
   }
 
   @Test
-  public void testUpdateCar() throws Exception {
+  public void testGetCarNonBinary() throws Exception {
+    given(carRepository.getCar(VIN)).willReturn(car);
+    this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(serializedCarNonBinary, new MediaType("application", MEDIA_SUB_TYPE_NON_BINARY)));
+
+    Car actualCar = this.client.getCar(VIN);
+
+    assertThat(actualCar).isEqualTo(car);
+  }
+
+  @Test
+  public void testUpdateCarBinary() throws Exception {
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
-        .andRespond(withSuccess(serializedCar, new MediaType("application", "avro+json")));
+        .andRespond(withSuccess(serializedCarBinary, new MediaType("application", MEDIA_SUB_TYPE_BINARY)));
+
+    Car actualCar = this.client.updateCar(VIN, car);
+
+    assertThat(actualCar).isEqualTo(car);
+  }
+
+  @Test
+  public void testUpdateCarNonBinary() throws Exception {
+    given(carRepository.updateCar(any(Car.class))).willReturn(car);
+    this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
+        .andRespond(withSuccess(serializedCarNonBinary, new MediaType("application", MEDIA_SUB_TYPE_NON_BINARY)));
 
     Car actualCar = this.client.updateCar(VIN, car);
 

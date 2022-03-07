@@ -21,16 +21,13 @@ import org.springframework.http.MediaType;
 /**
  * Avro HTTP message converter.
  * 
- * @see se.callista.blog.avro.serde.AvroSerializer<T>
- * @see se.callista.blog.avro.serde.AvroDeserializer<T>
- * 
  * @author Björn Beskow
  */
 public class AvroJsonHttpMessageConverter<T> extends AvroHttpMessageConverter<T> {
 
   public AvroJsonHttpMessageConverter() {
-    super(false, new MediaType("application", "avro+json", DEFAULT_CHARSET),
-        new MediaType("application", "*+avro+json", DEFAULT_CHARSET));
+    super(false, new MediaType("application", "avro_json", DEFAULT_CHARSET),
+        new MediaType("application", "*+avro_json", DEFAULT_CHARSET));
   }
 
 }

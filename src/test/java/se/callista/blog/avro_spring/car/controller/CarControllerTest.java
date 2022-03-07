@@ -16,44 +16,42 @@
 
 package se.callista.blog.avro_spring.car.controller;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.avro.serde.CarSerDe;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests for CarController
  * 
  * @author Björn Beskow
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(CarController.class)
 @AutoConfigureWebClient
 public class CarControllerTest {
 
   private static final String VIN = "123456789";
   private static final String PLATE_NUMBER = "ABC 123";
-
-  private CarSerDe carSerDe = new CarSerDe(false);
+  private static final String MEDIA_TYPE_BINARY = "application/avro";
+  private static final String MEDIA_TYPE_NON_BINARY = "application/avro_json";
 
   private Car car;
-  private byte[] serializedCar;
 
   @Autowired
   private MockMvc mvc;
@@ -61,29 +59,54 @@ public class CarControllerTest {
   @MockBean
   private CarRepository carRepository;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     car = new Car(VIN, PLATE_NUMBER);
-    serializedCar = carSerDe.serialize(car);
 
     given(carRepository.getCar(VIN)).willReturn(car);
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
   }
 
   @Test
-  public void testGetCar() throws Exception {
-
-    mvc.perform(get("/car/" + VIN).accept("application/avro+json")).andExpect(status().isOk())
-        .andExpect(content().contentType("application/avro+json"))
+  public void testGetCarNonBinar() throws Exception {
+    CarSerDe carSerDe = new CarSerDe(false);
+    byte[] serializedCar = carSerDe.serialize(car);
+    mvc.perform(get("/car/" + VIN).accept(MEDIA_TYPE_NON_BINARY)).andExpect(status().isOk())
+        .andExpect(content().contentType(MEDIA_TYPE_NON_BINARY))
         .andExpect(content().bytes(serializedCar));
   }
 
   @Test
-  public void testUpdateCar() throws Exception {
+  public void testGetCarBinary() throws Exception {
+    CarSerDe carSerDe = new CarSerDe(true);
+    byte[] serializedCar = carSerDe.serialize(car);
+    mvc.perform(get("/car/" + VIN).accept(MEDIA_TYPE_BINARY)).andExpect(status().isOk())
+        .andExpect(content().contentType(MEDIA_TYPE_BINARY))
+        .andExpect(content().bytes(serializedCar));
+  }
 
-    mvc.perform(put("/car/" + VIN).accept("application/avro+json").contentType("application/avro+json")
-        .content(serializedCar)).andExpect(status().isOk())
-        .andExpect(content().contentType("application/avro+json"))
+  @Test
+  public void testUpdateCarNonBinary() throws Exception {
+
+    CarSerDe carSerDe = new CarSerDe(false);
+    byte[] serializedCar = carSerDe.serialize(car);
+
+    mvc.perform(put("/car/" + VIN).accept(MEDIA_TYPE_NON_BINARY).contentType(MEDIA_TYPE_NON_BINARY)
+            .content(serializedCar)).andExpect(status().isOk())
+        .andExpect(content().contentType(MEDIA_TYPE_NON_BINARY))
+        .andExpect(content().bytes(serializedCar));
+  }
+
+  @Test
+  public void testUpdateCarBinary() throws Exception {
+
+    CarSerDe carSerDe = new CarSerDe(true);
+    byte[] serializedCar = carSerDe.serialize(car);
+
+
+    mvc.perform(put("/car/" + VIN).accept(MEDIA_TYPE_BINARY).contentType(MEDIA_TYPE_BINARY)
+            .content(serializedCar)).andExpect(status().isOk())
+        .andExpect(content().contentType(MEDIA_TYPE_BINARY))
         .andExpect(content().bytes(serializedCar));
   }
 }
