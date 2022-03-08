@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 /**
  * Rest Controller example, using Avro Serializer/Deserializer.
@@ -37,14 +38,15 @@ public class CarController {
   @Autowired
   private CarRepository repository;
 
-  @RequestMapping(value = "/car/{VIN}", method = RequestMethod.GET, produces = {"application/avro_json", "application/avro"})
+  @RequestMapping(value = "/car/{VIN}", method = RequestMethod.GET,
+      produces = {AvroConstants.MEDIA_TYPE_AVRO_JSON, AvroConstants.MEDIA_TYPE_AVRO_BINARY})
   public Car getCar(@PathVariable("VIN") String VIN) {
     return repository.getCar(VIN);
   }
 
   @RequestMapping(value = "/car/{VIN}", method = RequestMethod.PUT,
-      consumes = {"application/avro_json", "application/avro"},
-      produces = {"application/avro_json", "application/avro"})
+      consumes = {AvroConstants.MEDIA_TYPE_AVRO_JSON, AvroConstants.MEDIA_TYPE_AVRO_BINARY},
+      produces = {AvroConstants.MEDIA_TYPE_AVRO_JSON, AvroConstants.MEDIA_TYPE_AVRO_BINARY})
   public Car updateCar(@PathVariable("VIN") String VIN, @RequestBody Car car) {
     repository.updateCar(car);
     return car;

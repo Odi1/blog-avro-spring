@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.avro.serde.CarSerDe;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -48,8 +49,8 @@ public class CarControllerTest {
 
   private static final String VIN = "123456789";
   private static final String PLATE_NUMBER = "ABC 123";
-  private static final String MEDIA_TYPE_BINARY = "application/avro";
-  private static final String MEDIA_TYPE_NON_BINARY = "application/avro_json";
+  private static final String MEDIA_TYPE_BINARY = AvroConstants.MEDIA_TYPE_AVRO_BINARY;
+  private static final String MEDIA_TYPE_NON_BINARY = AvroConstants.MEDIA_TYPE_AVRO_JSON;
 
   private Car car;
 

@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import se.callista.blog.avro_spring.car.avro.Car;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -38,7 +39,7 @@ import java.util.Collections;
 public class CarClient {
 
   private static final MediaType APPLICATION_AVRO_JSON =
-      new MediaType("application", "avro_json", Charset.forName("UTF-8"));
+      new MediaType(AvroConstants.MEDIA_TYPE, AvroConstants.MEDIA_SUBTYPE_AVRO_JSON, Charset.forName("UTF-8"));
 
   @Autowired
   private RestTemplate restTemplate;

@@ -20,7 +20,6 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -35,14 +34,20 @@ import java.util.List;
  * @author Björn Beskow
  */
 @Configuration
-@Order(2)
 public class ConverterConfig implements WebMvcConfigurer {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    //super.configureMessageConverters(converters);
-    converters.add(new AvroBinaryHttpMessageConverter<SpecificRecordBase>());
-    converters.add(new AvroJsonHttpMessageConverter<SpecificRecordBase>());
+    // This will add our message converters at the end of the list, with about 10 default converters in front of us.
+    // Order matters: We may not use a media type which triggers any of the default converters, otherwise we will
+    // never be called.
+
+    // We need to add our message converters at the top of the list of about 10 default converters after us.
+    // Order matters: If we were at the end of the list, we would be restricted in which media types we are allowed
+    // to use. If e.g. we use "application/avro+json" and we were at the bottom of the list, then a Jackson message
+    // converter will try to handle it.
+    converters.add(0, new AvroBinaryHttpMessageConverter<SpecificRecordBase>());
+    converters.add(0, new AvroJsonHttpMessageConverter<SpecificRecordBase>());
   }
 
   @Bean

@@ -17,20 +17,17 @@
 package se.callista.blog.avro_spring.serde.spring;
 
 import org.springframework.http.MediaType;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 /**
  * Avro HTTP message converter.
- * 
- * @see se.callista.blog.avro.serde.AvroSerializer<T>
- * @see se.callista.blog.avro.serde.AvroDeserializer<T>
- * 
+ *
  * @author Björn Beskow
  */
 public class AvroBinaryHttpMessageConverter<T> extends AvroHttpMessageConverter<T> {
 
   public AvroBinaryHttpMessageConverter() {
-    super(true, new MediaType("application", "avro", DEFAULT_CHARSET),
-        new MediaType("application", "*+avro", DEFAULT_CHARSET));
+    super(true, new MediaType(AvroConstants.MEDIA_TYPE, AvroConstants.MEDIA_SUBTYPE_AVRO_BINARY, DEFAULT_CHARSET));
   }
 
 }

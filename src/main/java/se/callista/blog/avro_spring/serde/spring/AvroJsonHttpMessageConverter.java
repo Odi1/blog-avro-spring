@@ -17,6 +17,7 @@
 package se.callista.blog.avro_spring.serde.spring;
 
 import org.springframework.http.MediaType;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 /**
  * Avro HTTP message converter.
@@ -26,8 +27,7 @@ import org.springframework.http.MediaType;
 public class AvroJsonHttpMessageConverter<T> extends AvroHttpMessageConverter<T> {
 
   public AvroJsonHttpMessageConverter() {
-    super(false, new MediaType("application", "avro_json", DEFAULT_CHARSET),
-        new MediaType("application", "*+avro_json", DEFAULT_CHARSET));
+    super(false, new MediaType(AvroConstants.MEDIA_TYPE, AvroConstants.MEDIA_SUBTYPE_AVRO_JSON, DEFAULT_CHARSET));
   }
 
 }

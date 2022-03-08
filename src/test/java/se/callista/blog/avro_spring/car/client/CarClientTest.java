@@ -19,6 +19,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.avro.serde.CarSerDe;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
+import se.callista.blog.avro_spring.serde.AvroConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,8 +40,9 @@ public class CarClientTest {
 
   private static final String VIN = "123456789";
   private static final String PLATE_NUMBER = "ABC 123";
-  private static final String MEDIA_SUB_TYPE_BINARY = "avro";
-  private static final String MEDIA_SUB_TYPE_NON_BINARY = "avro_json";
+  private static final String MEDIA_SUB_TYPE_BINARY = AvroConstants.MEDIA_SUBTYPE_AVRO_BINARY;
+  private static final String MEDIA_SUB_TYPE_NON_BINARY = AvroConstants.MEDIA_SUBTYPE_AVRO_JSON;
+  private static final String MEDIA_TYPE_APPLICATION = AvroConstants.MEDIA_TYPE;
 
   private static CarSerDe carSerDeBinary = new CarSerDe(true);
   private static CarSerDe carSerDeNonBinary = new CarSerDe(false);
@@ -69,7 +71,7 @@ public class CarClientTest {
   public void testGetCarBinary() throws Exception {
     given(carRepository.getCar(VIN)).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
-        .andRespond(withSuccess(serializedCarBinary, new MediaType("application", MEDIA_SUB_TYPE_BINARY)));
+        .andRespond(withSuccess(serializedCarBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_BINARY)));
 
     Car actualCar = this.client.getCar(VIN);
 
@@ -80,7 +82,7 @@ public class CarClientTest {
   public void testGetCarNonBinary() throws Exception {
     given(carRepository.getCar(VIN)).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
-        .andRespond(withSuccess(serializedCarNonBinary, new MediaType("application", MEDIA_SUB_TYPE_NON_BINARY)));
+        .andRespond(withSuccess(serializedCarNonBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_NON_BINARY)));
 
     Car actualCar = this.client.getCar(VIN);
 
@@ -91,7 +93,7 @@ public class CarClientTest {
   public void testUpdateCarBinary() throws Exception {
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
-        .andRespond(withSuccess(serializedCarBinary, new MediaType("application", MEDIA_SUB_TYPE_BINARY)));
+        .andRespond(withSuccess(serializedCarBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_BINARY)));
 
     Car actualCar = this.client.updateCar(VIN, car);
 
@@ -102,7 +104,7 @@ public class CarClientTest {
   public void testUpdateCarNonBinary() throws Exception {
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
-        .andRespond(withSuccess(serializedCarNonBinary, new MediaType("application", MEDIA_SUB_TYPE_NON_BINARY)));
+        .andRespond(withSuccess(serializedCarNonBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_NON_BINARY)));
 
     Car actualCar = this.client.updateCar(VIN, car);
 
