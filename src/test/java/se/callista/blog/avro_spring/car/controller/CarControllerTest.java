@@ -61,7 +61,7 @@ public class CarControllerTest {
   private CarRepository carRepository;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  public void setUp() {
     car = new Car(VIN, PLATE_NUMBER);
 
     given(carRepository.getCar(VIN)).willReturn(car);
@@ -69,7 +69,7 @@ public class CarControllerTest {
   }
 
   @Test
-  public void testGetCarNonBinar() throws Exception {
+  public void testGetCarNonBinary() throws Exception {
     CarSerDe carSerDe = new CarSerDe(false);
     byte[] serializedCar = carSerDe.serialize(car);
     mvc.perform(get("/car/" + VIN).accept(MEDIA_TYPE_NON_BINARY)).andExpect(status().isOk())

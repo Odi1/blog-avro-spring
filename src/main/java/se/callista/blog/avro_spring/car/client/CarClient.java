@@ -16,7 +16,6 @@
 
 package se.callista.blog.avro_spring.car.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.serde.AvroConstants;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 /**
@@ -39,10 +38,13 @@ import java.util.Collections;
 public class CarClient {
 
   private static final MediaType APPLICATION_AVRO_JSON =
-      new MediaType(AvroConstants.MEDIA_TYPE, AvroConstants.MEDIA_SUBTYPE_AVRO_JSON, Charset.forName("UTF-8"));
+      new MediaType(AvroConstants.MEDIA_TYPE, AvroConstants.MEDIA_SUBTYPE_AVRO_JSON, StandardCharsets.UTF_8);
 
-  @Autowired
-  private RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
+
+  public CarClient(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+  }
 
   public Car getCar(String VIN) {
     HttpHeaders headers = new HttpHeaders();

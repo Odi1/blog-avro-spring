@@ -16,6 +16,8 @@
 
 package se.callista.blog.avro_spring.serde;
 
+import java.io.Serial;
+
 /**
  * Generic serialization/deserialization exception.
  * 
@@ -23,6 +25,7 @@ package se.callista.blog.avro_spring.serde;
  */
 public class SerializationException extends RuntimeException {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public SerializationException(String message, Throwable cause) {

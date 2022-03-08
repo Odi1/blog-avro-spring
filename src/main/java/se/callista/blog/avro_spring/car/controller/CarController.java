@@ -16,13 +16,11 @@
 
 package se.callista.blog.avro_spring.car.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import se.callista.blog.avro_spring.car.avro.Car;
 import se.callista.blog.avro_spring.car.persist.CarRepository;
 import se.callista.blog.avro_spring.serde.AvroConstants;
@@ -35,8 +33,11 @@ import se.callista.blog.avro_spring.serde.AvroConstants;
 @RestController
 public class CarController {
 
-  @Autowired
-  private CarRepository repository;
+  private final CarRepository repository;
+
+  public CarController(CarRepository repository) {
+    this.repository = repository;
+  }
 
   @RequestMapping(value = "/car/{VIN}", method = RequestMethod.GET,
       produces = {AvroConstants.MEDIA_TYPE_AVRO_JSON, AvroConstants.MEDIA_TYPE_AVRO_BINARY})

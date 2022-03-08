@@ -44,24 +44,18 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
     this.useBinaryEncoding = useBinaryEncoding;
   }
 
-  public boolean isUseBinaryEncoding() {
-    return useBinaryEncoding;
-  }
-
   @Override
   public T deserialize(Class<? extends T> clazz, byte[] data) throws SerializationException {
 
     try {
       T result = null;
       if (data != null) {
-        Class<? extends SpecificRecordBase> specificRecordClass =
-            (Class<? extends SpecificRecordBase>) clazz;
-        Schema schema = specificRecordClass.getDeclaredConstructor().newInstance().getSchema();
+        Schema schema = ((Class<? extends SpecificRecordBase>) clazz).getDeclaredConstructor().newInstance().getSchema();
         DatumReader<T> datumReader =
             new SpecificDatumReader<>(schema);
         Decoder decoder = useBinaryEncoding ?
             DecoderFactory.get().binaryDecoder(data, null) :
-            DecoderFactory.get().jsonDecoder(schema, new ByteArrayInputStream(data));;
+            DecoderFactory.get().jsonDecoder(schema, new ByteArrayInputStream(data));
 
         result = datumReader.read(null, decoder);
         if (LOGGER.isDebugEnabled()) {

@@ -28,8 +28,8 @@ import se.callista.blog.avro_spring.serde.SerializationException;
  */
 public class CarSerDe {
 
-  private AvroSerializer<Car> serializer;
-  private AvroDeserializer<Car> deserializer;
+  private final AvroSerializer<Car> serializer;
+  private final AvroDeserializer<Car> deserializer;
 
   public CarSerDe(boolean useBinaryEncoding) {
     serializer = new AvroSerializer<>(useBinaryEncoding);

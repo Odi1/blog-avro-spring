@@ -44,8 +44,8 @@ public class CarClientTest {
   private static final String MEDIA_SUB_TYPE_NON_BINARY = AvroConstants.MEDIA_SUBTYPE_AVRO_JSON;
   private static final String MEDIA_TYPE_APPLICATION = AvroConstants.MEDIA_TYPE;
 
-  private static CarSerDe carSerDeBinary = new CarSerDe(true);
-  private static CarSerDe carSerDeNonBinary = new CarSerDe(false);
+  private static final CarSerDe carSerDeBinary = new CarSerDe(true);
+  private static final CarSerDe carSerDeNonBinary = new CarSerDe(false);
 
   private static Car car;
   private static byte[] serializedCarBinary;
@@ -61,14 +61,14 @@ public class CarClientTest {
   private CarRepository carRepository;
 
   @BeforeAll
-  public static void setUp() throws Exception {
+  public static void setUp() {
     car = new Car(VIN, PLATE_NUMBER);
     serializedCarBinary = carSerDeBinary.serialize(car);
     serializedCarNonBinary = carSerDeNonBinary.serialize(car);
   }
 
   @Test
-  public void testGetCarBinary() throws Exception {
+  public void testGetCarBinary() {
     given(carRepository.getCar(VIN)).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(serializedCarBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_BINARY)));
@@ -79,7 +79,7 @@ public class CarClientTest {
   }
 
   @Test
-  public void testGetCarNonBinary() throws Exception {
+  public void testGetCarNonBinary() {
     given(carRepository.getCar(VIN)).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(serializedCarNonBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_NON_BINARY)));
@@ -90,7 +90,7 @@ public class CarClientTest {
   }
 
   @Test
-  public void testUpdateCarBinary() throws Exception {
+  public void testUpdateCarBinary() {
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
         .andRespond(withSuccess(serializedCarBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_BINARY)));
@@ -101,7 +101,7 @@ public class CarClientTest {
   }
 
   @Test
-  public void testUpdateCarNonBinary() throws Exception {
+  public void testUpdateCarNonBinary() {
     given(carRepository.updateCar(any(Car.class))).willReturn(car);
     this.server.expect(requestTo("/car/" + VIN)).andExpect(method(HttpMethod.PUT))
         .andRespond(withSuccess(serializedCarNonBinary, new MediaType(MEDIA_TYPE_APPLICATION, MEDIA_SUB_TYPE_NON_BINARY)));

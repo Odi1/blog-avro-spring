@@ -16,14 +16,12 @@
 
 package se.callista.blog.avro_spring.car.persist;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.stereotype.Repository;
+import se.callista.blog.avro_spring.car.avro.Car;
 
 import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Repository;
-
-import se.callista.blog.avro_spring.car.avro.Car;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sample Repository mockup implementation.
@@ -33,7 +31,7 @@ import se.callista.blog.avro_spring.car.avro.Car;
 @Repository
 public class CarRepositoryImpl implements CarRepository {
 
-  Map<String, Car> cars = new HashMap<>();
+  private final Map<String, Car> cars = new HashMap<>();
 
   @PostConstruct
   private void initCars() {

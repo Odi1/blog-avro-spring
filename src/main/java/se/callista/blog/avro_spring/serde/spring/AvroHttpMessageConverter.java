@@ -16,12 +16,8 @@
 
 package se.callista.blog.avro_spring.serde.spring;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -33,22 +29,21 @@ import se.callista.blog.avro_spring.serde.AvroSerializer;
 import se.callista.blog.avro_spring.serde.Deserializer;
 import se.callista.blog.avro_spring.serde.Serializer;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Avro HTTP message converter.
- * 
- * @see se.callista.blog.avro.serde.AvroSerializer<T>
- * @see se.callista.blog.avro.serde.AvroDeserializer<T>
  * 
  * @author Björn Beskow
  */
 public abstract class AvroHttpMessageConverter<T> extends AbstractHttpMessageConverter<T> {
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-  public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
-  private Serializer<SpecificRecordBase> serializer;
-  private Deserializer<SpecificRecordBase> deserializer;
+  private final Serializer<SpecificRecordBase> serializer;
+  private final Deserializer<SpecificRecordBase> deserializer;
 
   public AvroHttpMessageConverter(boolean useBinaryEncoding, MediaType... supportedMediaTypes) {
     super(supportedMediaTypes);

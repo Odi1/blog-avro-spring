@@ -19,8 +19,6 @@ package se.callista.blog.avro_spring.car.avro.serde;
 import org.junit.jupiter.api.Test;
 import se.callista.blog.avro_spring.car.avro.Car;
 
-import java.io.IOException;
-
 /**
  * Tests for CarSerDe
  * 
@@ -29,7 +27,7 @@ import java.io.IOException;
 public class CarSerDeTest {
 
   @Test
-  public void testNonBinaryCarSerDe() throws IOException {
+  public void testNonBinaryCarSerDe() {
     Car car1 = new Car();
     car1.setVIN("aVin");
     car1.setPlateNumber("aPlateNumer");
@@ -43,7 +41,7 @@ public class CarSerDeTest {
   }
 
   @Test
-  public void testBinaryCarSerDe() throws IOException {
+  public void testBinaryCarSerDe() {
     Car car1 = new Car();
     car1.setVIN("aVin");
     car1.setPlateNumber("aPlateNumer");
